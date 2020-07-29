@@ -1,11 +1,13 @@
 ﻿//------------------------------------------------------------
-// Game Framework v3.x
-// Copyright © 2013-2017 Jiang Yin. All rights reserved.
-// Homepage: http://gameframework.cn/
-// Feedback: mailto:jiangyin@gameframework.cn
+// Game Framework
+// Copyright © 2013-2020 Jiang Yin. All rights reserved.
+// Homepage: https://gameframework.cn/
+// Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 
+using System;
 using System.Net;
+using System.Net.Sockets;
 
 namespace GameFramework.Network
 {
@@ -23,6 +25,14 @@ namespace GameFramework.Network
         }
 
         /// <summary>
+        /// 获取网络频道所使用的 Socket。
+        /// </summary>
+        Socket Socket
+        {
+            get;
+        }
+
+        /// <summary>
         /// 获取是否已连接。
         /// </summary>
         bool Connected
@@ -31,57 +41,49 @@ namespace GameFramework.Network
         }
 
         /// <summary>
-        /// 获取网络类型。
+        /// 获取网络服务类型。
         /// </summary>
-        NetworkType NetworkType
+        ServiceType ServiceType
         {
             get;
         }
 
         /// <summary>
-        /// 获取本地终结点的 IP 地址。
+        /// 获取网络地址类型。
         /// </summary>
-        IPAddress LocalIPAddress
+        AddressFamily AddressFamily
         {
             get;
         }
 
         /// <summary>
-        /// 获取本地终结点的端口号。
+        /// 获取要发送的消息包数量。
         /// </summary>
-        int LocalPort
+        int SendPacketCount
         {
             get;
         }
 
         /// <summary>
-        /// 获取远程终结点的 IP 地址。
+        /// 获取累计发送的消息包数量。
         /// </summary>
-        IPAddress RemoteIPAddress
+        int SentPacketCount
         {
             get;
         }
 
         /// <summary>
-        /// 获取远程终结点的端口号。
+        /// 获取已接收未处理的消息包数量。
         /// </summary>
-        int RemotePort
+        int ReceivePacketCount
         {
             get;
         }
 
         /// <summary>
-        /// 获取数据包头长度。
+        /// 获取累计已接收的消息包数量。
         /// </summary>
-        int PacketHeaderLength
-        {
-            get;
-        }
-
-        /// <summary>
-        /// 获取数据包最大字节数。
-        /// </summary>
-        int MaxPacketLength
+        int ReceivedPacketCount
         {
             get;
         }
@@ -96,6 +98,14 @@ namespace GameFramework.Network
         }
 
         /// <summary>
+        /// 获取丢失心跳的次数。
+        /// </summary>
+        int MissHeartBeatCount
+        {
+            get;
+        }
+
+        /// <summary>
         /// 获取或设置心跳间隔时长，以秒为单位。
         /// </summary>
         float HeartBeatInterval
@@ -105,22 +115,24 @@ namespace GameFramework.Network
         }
 
         /// <summary>
-        /// 获取或设置接收缓冲区字节数。
+        /// 获取心跳等待时长，以秒为单位。
         /// </summary>
-        int ReceiveBufferSize
+        float HeartBeatElapseSeconds
         {
             get;
-            set;
         }
 
         /// <summary>
-        /// 获取或设置发送缓冲区字节数。
+        /// 注册网络消息包处理函数。
         /// </summary>
-        int SendBufferSize
-        {
-            get;
-            set;
-        }
+        /// <param name="handler">要注册的网络消息包处理函数。</param>
+        void RegisterHandler(IPacketHandler handler);
+
+        /// <summary>
+        /// 设置默认事件处理函数。
+        /// </summary>
+        /// <param name="handler">要设置的默认事件处理函数。</param>
+        void SetDefaultHandler(EventHandler<Packet> handler);
 
         /// <summary>
         /// 连接到远程主机。
@@ -134,44 +146,8 @@ namespace GameFramework.Network
         /// </summary>
         /// <param name="ipAddress">远程主机的 IP 地址。</param>
         /// <param name="port">远程主机的端口号。</param>
-        /// <param name="maxPacketLength">数据包最大字节数。</param>
-        void Connect(IPAddress ipAddress, int port, int maxPacketLength);
-
-        /// <summary>
-        /// 连接到远程主机。
-        /// </summary>
-        /// <param name="ipAddress">远程主机的 IP 地址。</param>
-        /// <param name="port">远程主机的端口号。</param>
         /// <param name="userData">用户自定义数据。</param>
         void Connect(IPAddress ipAddress, int port, object userData);
-
-        /// <summary>
-        /// 连接到远程主机。
-        /// </summary>
-        /// <param name="ipAddress">远程主机的 IP 地址。</param>
-        /// <param name="port">远程主机的端口号。</param>
-        /// <param name="packetHeaderLength">数据包头长度。</param>
-        /// <param name="maxPacketLength">数据包最大字节数。</param>
-        void Connect(IPAddress ipAddress, int port, int packetHeaderLength, int maxPacketLength);
-
-        /// <summary>
-        /// 连接到远程主机。
-        /// </summary>
-        /// <param name="ipAddress">远程主机的 IP 地址。</param>
-        /// <param name="port">远程主机的端口号。</param>
-        /// <param name="maxPacketLength">数据包最大字节数。</param>
-        /// <param name="userData">用户自定义数据。</param>
-        void Connect(IPAddress ipAddress, int port, int maxPacketLength, object userData);
-
-        /// <summary>
-        /// 连接到远程主机。
-        /// </summary>
-        /// <param name="ipAddress">远程主机的 IP 地址。</param>
-        /// <param name="port">远程主机的端口号。</param>
-        /// <param name="packetHeaderLength">数据包头长度。</param>
-        /// <param name="maxPacketLength">数据包最大字节数。</param>
-        /// <param name="userData">用户自定义数据。</param>
-        void Connect(IPAddress ipAddress, int port, int packetHeaderLength, int maxPacketLength, object userData);
 
         /// <summary>
         /// 关闭网络频道。
@@ -179,48 +155,10 @@ namespace GameFramework.Network
         void Close();
 
         /// <summary>
-        /// 向远程主机发送数据包。
+        /// 向远程主机发送消息包。
         /// </summary>
-        /// <param name="buffer">数据包流。</param>
-        void Send(byte[] buffer);
-
-        /// <summary>
-        /// 向远程主机发送数据包。
-        /// </summary>
-        /// <param name="buffer">数据包流。</param>
-        /// <param name="userData">用户自定义数据。</param>
-        void Send(byte[] buffer, object userData);
-
-        /// <summary>
-        /// 向远程主机发送数据包。
-        /// </summary>
-        /// <param name="buffer">数据包流。</param>
-        /// <param name="offset">要发送数据包的偏移。</param>
-        /// <param name="size">要发送数据包的长度。</param>
-        void Send(byte[] buffer, int offset, int size);
-
-        /// <summary>
-        /// 向远程主机发送数据包。
-        /// </summary>
-        /// <param name="buffer">数据包流。</param>
-        /// <param name="offset">要发送数据包的偏移。</param>
-        /// <param name="size">要发送数据包的长度。</param>
-        /// <param name="userData">用户自定义数据。</param>
-        void Send(byte[] buffer, int offset, int size, object userData);
-
-        /// <summary>
-        /// 向远程主机发送数据包。
-        /// </summary>
-        /// <typeparam name="T">数据包类型。</typeparam>
-        /// <param name="packet">要发送的数据包。</param>
+        /// <typeparam name="T">消息包类型。</typeparam>
+        /// <param name="packet">要发送的消息包。</param>
         void Send<T>(T packet) where T : Packet;
-
-        /// <summary>
-        /// 向远程主机发送数据包。
-        /// </summary>
-        /// <typeparam name="T">数据包类型。</typeparam>
-        /// <param name="packet">要发送的数据包。</param>
-        /// <param name="userData">用户自定义数据。</param>
-        void Send<T>(T packet, object userData) where T : Packet;
     }
 }

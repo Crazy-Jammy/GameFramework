@@ -1,8 +1,8 @@
 ﻿//------------------------------------------------------------
-// Game Framework v3.x
-// Copyright © 2013-2017 Jiang Yin. All rights reserved.
-// Homepage: http://gameframework.cn/
-// Feedback: mailto:jiangyin@gameframework.cn
+// Game Framework
+// Copyright © 2013-2020 Jiang Yin. All rights reserved.
+// Homepage: https://gameframework.cn/
+// Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 
 namespace GameFramework.Network
@@ -10,22 +10,22 @@ namespace GameFramework.Network
     /// <summary>
     /// 网络错误码。
     /// </summary>
-    public enum NetworkErrorCode
+    public enum NetworkErrorCode : byte
     {
         /// <summary>
-        /// 状态错误。
+        /// 未知错误。
         /// </summary>
-        StatusError,
+        Unknown = 0,
 
         /// <summary>
-        /// 序列化错误。
+        /// 地址族错误。
         /// </summary>
-        SerializeError,
+        AddressFamilyError,
 
         /// <summary>
-        /// 反序列化错误。
+        /// Socket 错误。
         /// </summary>
-        DeserializeError,
+        SocketError,
 
         /// <summary>
         /// 连接错误。
@@ -43,18 +43,18 @@ namespace GameFramework.Network
         ReceiveError,
 
         /// <summary>
-        /// 消息包头错误。
+        /// 序列化错误。
         /// </summary>
-        HeaderError,
+        SerializeError,
 
         /// <summary>
-        /// 消息包长度错误。
+        /// 反序列化消息包头错误。
         /// </summary>
-        OutOfRangeError,
+        DeserializePacketHeaderError,
 
         /// <summary>
-        /// 消息包流错误。
+        /// 反序列化消息包错误。
         /// </summary>
-        StreamError,
+        DeserializePacketError
     }
 }

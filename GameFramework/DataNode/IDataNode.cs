@@ -1,9 +1,11 @@
 ﻿//------------------------------------------------------------
-// Game Framework v3.x
-// Copyright © 2013-2017 Jiang Yin. All rights reserved.
-// Homepage: http://gameframework.cn/
-// Feedback: mailto:jiangyin@gameframework.cn
+// Game Framework
+// Copyright © 2013-2020 Jiang Yin. All rights reserved.
+// Homepage: https://gameframework.cn/
+// Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
+
+using System.Collections.Generic;
 
 namespace GameFramework.DataNode
 {
@@ -45,12 +47,6 @@ namespace GameFramework.DataNode
         }
 
         /// <summary>
-        /// 获取数据结点的数据。
-        /// </summary>
-        /// <returns>数据结点数据。</returns>
-        Variable GetData();
-
-        /// <summary>
         /// 根据类型获取数据结点的数据。
         /// </summary>
         /// <typeparam name="T">要获取的数据类型。</typeparam>
@@ -58,11 +54,37 @@ namespace GameFramework.DataNode
         T GetData<T>() where T : Variable;
 
         /// <summary>
+        /// 获取数据结点的数据。
+        /// </summary>
+        /// <returns>数据结点数据。</returns>
+        Variable GetData();
+
+        /// <summary>
         /// 设置数据结点的数据。
         /// </summary>
         /// <typeparam name="T">要设置的数据类型。</typeparam>
         /// <param name="data">要设置的数据。</param>
         void SetData<T>(T data) where T : Variable;
+
+        /// <summary>
+        /// 设置数据结点的数据。
+        /// </summary>
+        /// <param name="data">要设置的数据。</param>
+        void SetData(Variable data);
+
+        /// <summary>
+        /// 根据索引检查是否存在子数据结点。
+        /// </summary>
+        /// <param name="index">子数据结点的索引。</param>
+        /// <returns>是否存在子数据结点。</returns>
+        bool HasChild(int index);
+
+        /// <summary>
+        /// 根据名称检查是否存在子数据结点。
+        /// </summary>
+        /// <param name="name">子数据结点名称。</param>
+        /// <returns>是否存在子数据结点。</returns>
+        bool HasChild(string name);
 
         /// <summary>
         /// 根据索引获取子数据结点。
@@ -90,6 +112,12 @@ namespace GameFramework.DataNode
         /// </summary>
         /// <returns>所有子数据结点。</returns>
         IDataNode[] GetAllChild();
+
+        /// <summary>
+        /// 获取所有子数据结点。
+        /// </summary>
+        /// <param name="results">所有子数据结点。</param>
+        void GetAllChild(List<IDataNode> results);
 
         /// <summary>
         /// 根据索引移除子数据结点。

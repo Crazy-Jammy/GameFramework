@@ -1,8 +1,8 @@
 ﻿//------------------------------------------------------------
-// Game Framework v3.x
-// Copyright © 2013-2017 Jiang Yin. All rights reserved.
-// Homepage: http://gameframework.cn/
-// Feedback: mailto:jiangyin@gameframework.cn
+// Game Framework
+// Copyright © 2013-2020 Jiang Yin. All rights reserved.
+// Homepage: https://gameframework.cn/
+// Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 
 using System;
@@ -20,6 +20,14 @@ namespace GameFramework.DataTable
         /// 获取数据表名称。
         /// </summary>
         string Name
+        {
+            get;
+        }
+
+        /// <summary>
+        /// 获取数据表完整名称。
+        /// </summary>
+        string FullName
         {
             get;
         }
@@ -96,31 +104,89 @@ namespace GameFramework.DataTable
         T GetDataRow(Predicate<T> condition);
 
         /// <summary>
+        /// 获取符合条件的数据表行。
+        /// </summary>
+        /// <param name="condition">要检查的条件。</param>
+        /// <returns>符合条件的数据表行。</returns>
+        T[] GetDataRows(Predicate<T> condition);
+
+        /// <summary>
+        /// 获取符合条件的数据表行。
+        /// </summary>
+        /// <param name="condition">要检查的条件。</param>
+        /// <param name="results">符合条件的数据表行。</param>
+        void GetDataRows(Predicate<T> condition, List<T> results);
+
+        /// <summary>
+        /// 获取排序后的数据表行。
+        /// </summary>
+        /// <param name="comparison">要排序的条件。</param>
+        /// <returns>排序后的数据表行。</returns>
+        T[] GetDataRows(Comparison<T> comparison);
+
+        /// <summary>
+        /// 获取排序后的数据表行。
+        /// </summary>
+        /// <param name="comparison">要排序的条件。</param>
+        /// <param name="results">排序后的数据表行。</param>
+        void GetDataRows(Comparison<T> comparison, List<T> results);
+
+        /// <summary>
+        /// 获取排序后的符合条件的数据表行。
+        /// </summary>
+        /// <param name="condition">要检查的条件。</param>
+        /// <param name="comparison">要排序的条件。</param>
+        /// <returns>排序后的符合条件的数据表行。</returns>
+        T[] GetDataRows(Predicate<T> condition, Comparison<T> comparison);
+
+        /// <summary>
+        /// 获取排序后的符合条件的数据表行。
+        /// </summary>
+        /// <param name="condition">要检查的条件。</param>
+        /// <param name="comparison">要排序的条件。</param>
+        /// <param name="results">排序后的符合条件的数据表行。</param>
+        void GetDataRows(Predicate<T> condition, Comparison<T> comparison, List<T> results);
+
+        /// <summary>
         /// 获取所有数据表行。
         /// </summary>
         /// <returns>所有数据表行。</returns>
         T[] GetAllDataRows();
 
         /// <summary>
-        /// 获取所有符合条件的数据表行。
+        /// 获取所有数据表行。
         /// </summary>
-        /// <param name="condition">要检查的条件。</param>
-        /// <returns>所有符合条件的数据表行。</returns>
-        T[] GetAllDataRows(Predicate<T> condition);
+        /// <param name="results">所有数据表行。</param>
+        void GetAllDataRows(List<T> results);
 
         /// <summary>
-        /// 获取所有排序后的数据表行。
+        /// 增加数据表行。
         /// </summary>
-        /// <param name="comparison">要排序的条件。</param>
-        /// <returns>所有排序后的数据表行。</returns>
-        T[] GetAllDataRows(Comparison<T> comparison);
+        /// <param name="dataRowString">要解析的数据表行字符串。</param>
+        /// <param name="userData">用户自定义数据。</param>
+        /// <returns>是否增加数据表行成功。</returns>
+        bool AddDataRow(string dataRowString, object userData);
 
         /// <summary>
-        /// 获取所有排序后的符合条件的数据表行。
+        /// 增加数据表行。
         /// </summary>
-        /// <param name="condition">要检查的条件。</param>
-        /// <param name="comparison">要排序的条件。</param>
-        /// <returns>所有排序后的符合条件的数据表行。</returns>
-        T[] GetAllDataRows(Predicate<T> condition, Comparison<T> comparison);
+        /// <param name="dataRowBytes">要解析的数据表行二进制流。</param>
+        /// <param name="startIndex">数据表行二进制流的起始位置。</param>
+        /// <param name="length">数据表行二进制流的长度。</param>
+        /// <param name="userData">用户自定义数据。</param>
+        /// <returns>是否增加数据表行成功。</returns>
+        bool AddDataRow(byte[] dataRowBytes, int startIndex, int length, object userData);
+
+        /// <summary>
+        /// 移除指定数据表行。
+        /// </summary>
+        /// <param name="id">要移除数据表行的编号。</param>
+        /// <returns>是否移除数据表行成功。</returns>
+        bool RemoveDataRow(int id);
+
+        /// <summary>
+        /// 清空所有数据表行。
+        /// </summary>
+        void RemoveAllDataRows();
     }
 }

@@ -1,8 +1,8 @@
 ﻿//------------------------------------------------------------
-// Game Framework v3.x
-// Copyright © 2013-2017 Jiang Yin. All rights reserved.
-// Homepage: http://gameframework.cn/
-// Feedback: mailto:jiangyin@gameframework.cn
+// Game Framework
+// Copyright © 2013-2020 Jiang Yin. All rights reserved.
+// Homepage: https://gameframework.cn/
+// Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 
 using System;
@@ -15,19 +15,7 @@ namespace GameFramework
     /// </summary>
     public static class GameFrameworkEntry
     {
-        private const string GameFrameworkVersion = "3.0.4";
-        private static readonly LinkedList<GameFrameworkModule> s_GameFrameworkModules = new LinkedList<GameFrameworkModule>();
-
-        /// <summary>
-        /// 获取游戏框架版本号。
-        /// </summary>
-        public static string Version
-        {
-            get
-            {
-                return GameFrameworkVersion;
-            }
-        }
+        private static readonly GameFrameworkLinkedList<GameFrameworkModule> s_GameFrameworkModules = new GameFrameworkLinkedList<GameFrameworkModule>();
 
         /// <summary>
         /// 所有游戏框架模块轮询。
@@ -53,6 +41,9 @@ namespace GameFramework
             }
 
             s_GameFrameworkModules.Clear();
+            ReferencePool.ClearAll();
+            Utility.Marshal.FreeCachedHGlobal();
+            GameFrameworkLog.SetLogHelper(null);
         }
 
         /// <summary>
@@ -66,19 +57,19 @@ namespace GameFramework
             Type interfaceType = typeof(T);
             if (!interfaceType.IsInterface)
             {
-                throw new GameFrameworkException(string.Format("You must get module by interface, but '{0}' is not.", interfaceType.FullName));
+                throw new GameFrameworkException(Utility.Text.Format("You must get module by interface, but '{0}' is not.", interfaceType.FullName));
             }
 
-            if (!interfaceType.FullName.StartsWith("GameFramework."))
+            if (!interfaceType.FullName.StartsWith("GameFramework.", StringComparison.Ordinal))
             {
-                throw new GameFrameworkException(string.Format("You must get a Game Framework module, but '{0}' is not.", interfaceType.FullName));
+                throw new GameFrameworkException(Utility.Text.Format("You must get a Game Framework module, but '{0}' is not.", interfaceType.FullName));
             }
 
-            string moduleName = string.Format("{0}.{1}", interfaceType.Namespace, interfaceType.Name.Substring(1));
+            string moduleName = Utility.Text.Format("{0}.{1}", interfaceType.Namespace, interfaceType.Name.Substring(1));
             Type moduleType = Type.GetType(moduleName);
             if (moduleType == null)
             {
-                throw new GameFrameworkException(string.Format("Can not find Game Framework module type '{0}'.", moduleName));
+                throw new GameFrameworkException(Utility.Text.Format("Can not find Game Framework module type '{0}'.", moduleName));
             }
 
             return GetModule(moduleType) as T;
@@ -113,7 +104,7 @@ namespace GameFramework
             GameFrameworkModule module = (GameFrameworkModule)Activator.CreateInstance(moduleType);
             if (module == null)
             {
-                throw new GameFrameworkException(string.Format("Can not create module '{0}'.", module.GetType().FullName));
+                throw new GameFrameworkException(Utility.Text.Format("Can not create module '{0}'.", moduleType.FullName));
             }
 
             LinkedListNode<GameFrameworkModule> current = s_GameFrameworkModules.First;

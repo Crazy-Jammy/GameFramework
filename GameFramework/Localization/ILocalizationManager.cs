@@ -1,19 +1,18 @@
 ﻿//------------------------------------------------------------
-// Game Framework v3.x
-// Copyright © 2013-2017 Jiang Yin. All rights reserved.
-// Homepage: http://gameframework.cn/
-// Feedback: mailto:jiangyin@gameframework.cn
+// Game Framework
+// Copyright © 2013-2020 Jiang Yin. All rights reserved.
+// Homepage: https://gameframework.cn/
+// Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 
 using GameFramework.Resource;
-using System;
 
 namespace GameFramework.Localization
 {
     /// <summary>
     /// 本地化管理器接口。
     /// </summary>
-    public interface ILocalizationManager
+    public interface ILocalizationManager : IDataProvider<ILocalizationManager>
     {
         /// <summary>
         /// 获取或设置本地化语言。
@@ -33,32 +32,12 @@ namespace GameFramework.Localization
         }
 
         /// <summary>
-        /// 获取字典条数。
+        /// 获取字典数量。
         /// </summary>
         int DictionaryCount
         {
             get;
         }
-
-        /// <summary>
-        /// 加载字典成功事件。
-        /// </summary>
-        event EventHandler<LoadDictionarySuccessEventArgs> LoadDictionarySuccess;
-
-        /// <summary>
-        /// 加载字典失败事件。
-        /// </summary>
-        event EventHandler<LoadDictionaryFailureEventArgs> LoadDictionaryFailure;
-
-        /// <summary>
-        /// 加载字典更新事件。
-        /// </summary>
-        event EventHandler<LoadDictionaryUpdateEventArgs> LoadDictionaryUpdate;
-
-        /// <summary>
-        /// 加载字典时加载依赖资源事件。
-        /// </summary>
-        event EventHandler<LoadDictionaryDependencyAssetEventArgs> LoadDictionaryDependencyAsset;
 
         /// <summary>
         /// 设置资源管理器。
@@ -67,38 +46,50 @@ namespace GameFramework.Localization
         void SetResourceManager(IResourceManager resourceManager);
 
         /// <summary>
+        /// 设置本地化数据提供者辅助器。
+        /// </summary>
+        /// <param name="dataProviderHelper">本地化数据提供者辅助器。</param>
+        void SetDataProviderHelper(IDataProviderHelper<ILocalizationManager> dataProviderHelper);
+
+        /// <summary>
         /// 设置本地化辅助器。
         /// </summary>
         /// <param name="localizationHelper">本地化辅助器。</param>
         void SetLocalizationHelper(ILocalizationHelper localizationHelper);
 
         /// <summary>
-        /// 加载字典。
+        /// 根据字典主键获取字典内容字符串。
         /// </summary>
-        /// <param name="dictionaryAssetName">字典资源名称。</param>
-        void LoadDictionary(string dictionaryAssetName);
+        /// <param name="key">字典主键。</param>
+        /// <returns>要获取的字典内容字符串。</returns>
+        string GetString(string key);
 
         /// <summary>
-        /// 加载字典。
+        /// 根据字典主键获取字典内容字符串。
         /// </summary>
-        /// <param name="dictionaryAssetName">字典资源名称。</param>
-        /// <param name="userData">用户自定义数据。</param>
-        void LoadDictionary(string dictionaryAssetName, object userData);
+        /// <param name="key">字典主键。</param>
+        /// <param name="arg0">字典参数 0。</param>
+        /// <returns>要获取的字典内容字符串。</returns>
+        string GetString(string key, object arg0);
 
         /// <summary>
-        /// 解析字典。
+        /// 根据字典主键获取字典内容字符串。
         /// </summary>
-        /// <param name="text">要解析的字典文本。</param>
-        /// <returns>是否解析字典成功。</returns>
-        bool ParseDictionary(string text);
+        /// <param name="key">字典主键。</param>
+        /// <param name="arg0">字典参数 0。</param>
+        /// <param name="arg1">字典参数 1。</param>
+        /// <returns>要获取的字典内容字符串。</returns>
+        string GetString(string key, object arg0, object arg1);
 
         /// <summary>
-        /// 解析字典。
+        /// 根据字典主键获取字典内容字符串。
         /// </summary>
-        /// <param name="text">要解析的字典文本。</param>
-        /// <param name="userData">用户自定义数据。</param>
-        /// <returns>是否解析字典成功。</returns>
-        bool ParseDictionary(string text, object userData);
+        /// <param name="key">字典主键。</param>
+        /// <param name="arg0">字典参数 0。</param>
+        /// <param name="arg1">字典参数 1。</param>
+        /// <param name="arg2">字典参数 2。</param>
+        /// <returns>要获取的字典内容字符串。</returns>
+        string GetString(string key, object arg0, object arg1, object arg2);
 
         /// <summary>
         /// 根据字典主键获取字典内容字符串。
@@ -136,5 +127,10 @@ namespace GameFramework.Localization
         /// <param name="key">字典主键。</param>
         /// <returns>是否移除字典成功。</returns>
         bool RemoveRawString(string key);
+
+        /// <summary>
+        /// 清空所有字典。
+        /// </summary>
+        void RemoveAllRawStrings();
     }
 }
